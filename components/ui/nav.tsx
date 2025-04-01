@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Button } from "./button"
 
 export function Nav() {
   return (
@@ -19,12 +18,6 @@ export function Nav() {
             <Link href="/chat" className="transition-colors hover:text-foreground/80">
               Chat
             </Link>
-          </nav>
-        </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="flex items-center space-x-2">
-            <Button variant="outline">Sign In</Button>
-            <Button>Get Started</Button>
           </nav>
         </div>
       </div>
