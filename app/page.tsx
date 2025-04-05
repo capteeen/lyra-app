@@ -1,6 +1,8 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+'use client';
+
 import { ArrowRight, Sparkles, Video, Image as ImageIcon, Bot, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -232,11 +234,11 @@ export default function LandingPage() {
                   <li className="flex items-center">
                     <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
                     Multi-language Support
-          </li>
+                  </li>
                   <li className="flex items-center">
                     <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
                     Custom Training
-          </li>
+                  </li>
                 </ul>
               </div>
             </div>
