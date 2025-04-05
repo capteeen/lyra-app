@@ -1,132 +1,159 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Video, ArrowLeft, Sparkles, Play } from "lucide-react";
+import { ArrowLeft, Sparkles, Play } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { useGeneration } from "@/hooks/useGeneration";
+import { useState, useEffect } from "react";
 
-export default function VideoGenerationPage() {
-  const [prompt, setPrompt] = useState('');
-  const [duration, setDuration] = useState(5);
-  const [resolution, setResolution] = useState('1080p');
-  const { generate, loading, error, output } = useGeneration('video');
+export default function VideoPage() {
+  const [prompt, setPrompt] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
-  const handleGenerate = async () => {
-    if (!prompt) return;
-    await generate({ prompt, duration, resolution });
+  // Progress bar animation
+  useEffect(() => {
+    if (!loading) {
+      setProgress(0);
+      return;
+    }
+
+    const totalDuration = 184972; // Total duration in milliseconds
+    const intervalDuration = 100; // Update every 100ms
+    const steps = totalDuration / intervalDuration;
+    const incrementPerStep = 100 / steps;
+    let currentProgress = 0;
+
+    const interval = setInterval(() => {
+      currentProgress += incrementPerStep;
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        currentProgress = 100;
+      }
+      setProgress(currentProgress);
+    }, intervalDuration);
+
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  const generateVideo = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setVideoUrl(null);
+      setProgress(0);
+
+      const response = await fetch('/api/video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate video');
+      }
+
+      setVideoUrl(data.url);
+    } catch (err: any) {
+      setError(err.message);
+      console.error('Video generation error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Format time remaining
+  const formatTimeRemaining = () => {
+    const totalDuration = 184972;
+    const remaining = totalDuration * (1 - progress / 100);
+    const seconds = Math.ceil(remaining / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
-      {/* Header */}
-      <header className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl">
-        <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/create" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-              <ArrowLeft className="h-6 w-6" />
-            </Link>
-            <h1 className="text-xl font-semibold">Video Generation</h1>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <Link href="/" className="text-gray-400 hover:text-white transition">
+            <ArrowLeft className="w-6 h-6" />
+          </Link>
+          <h1 className="text-2xl font-bold">Video Generation</h1>
         </div>
-      </header>
 
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
-          {/* Main Content */}
-          <div className="space-y-6">
-            <div className="p-8 rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold">Create Video</h2>
-                <textarea
-                  className="w-full h-32 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Describe the video you want to create..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                />
-                <div className="flex items-center gap-4">
-                  <Button 
-                    className="bg-gradient-to-r from-purple-500 to-pink-500"
-                    onClick={handleGenerate}
-                    disabled={loading || !prompt}
-                  >
-                    {loading ? 'Generating...' : 'Generate'} <Sparkles className="ml-2 h-4 w-4" />
-                  </Button>
-                  <p className="text-sm text-gray-500">Using Zeroscope XL</p>
-                </div>
-                {error && (
-                  <p className="text-sm text-red-500">{error}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Generated Video Display */}
-            <div className="aspect-video rounded-2xl bg-white dark:bg-gray-900 shadow-lg flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-700">
-              {output && output[0] ? (
-                <video 
-                  src={output[0]} 
-                  controls 
-                  className="w-full h-full rounded-2xl"
-                />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Input Section */}
+          <div className="space-y-4">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the video you want to generate..."
+              className="w-full h-32 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+            />
+            <Button
+              onClick={generateVideo}
+              disabled={!prompt || loading}
+              className="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                  Generating...
+                </>
               ) : (
-                <div className="text-center space-y-4 p-8">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto">
-                    <Play className="h-6 w-6 text-white" />
-                  </div>
-                  <p className="text-gray-500">Generated videos will appear here</p>
-                </div>
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  Generate Video
+                </>
               )}
-            </div>
+            </Button>
+            {loading && (
+              <div className="space-y-2">
+                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-200"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-sm text-gray-400">
+                  <span>{Math.round(progress)}%</span>
+                  <span>Estimated time: {formatTimeRemaining()}</span>
+                </div>
+              </div>
+            )}
+            {error && (
+              <div className="text-red-500 text-sm mt-2">
+                {error}
+              </div>
+            )}
           </div>
 
-          {/* Settings Panel */}
-          <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">Settings</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Video Length</label>
-                  <select 
-                    className="w-full p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                    value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
-                  >
-                    <option value={5}>5 seconds</option>
-                    <option value={10}>10 seconds</option>
-                    <option value={15}>15 seconds</option>
-                    <option value={30}>30 seconds</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Resolution</label>
-                  <select 
-                    className="w-full p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                    value={resolution}
-                    onChange={(e) => setResolution(e.target.value)}
-                  >
-                    <option>480p</option>
-                    <option>720p</option>
-                    <option>1080p</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Style</label>
-                  <select className="w-full p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                    <option>Realistic</option>
-                    <option>Cinematic</option>
-                    <option>Animated</option>
-                    <option>Abstract</option>
-                  </select>
-                </div>
+          {/* Video Display Section */}
+          <div className="bg-gray-800 rounded-lg p-4 min-h-[300px] flex items-center justify-center">
+            {videoUrl ? (
+              <video
+                src={videoUrl}
+                controls
+                className="max-w-full max-h-[500px] rounded-lg"
+                autoPlay
+                loop
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="text-gray-400 flex flex-col items-center gap-2">
+                <Play className="w-12 h-12" />
+                <p>Generated video will appear here</p>
               </div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">History</h3>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-500">Your generated videos will appear here</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -3,20 +3,50 @@
 import { Button } from "@/components/ui/button";
 import { Mic, ArrowLeft, Sparkles, Play, Pause } from "lucide-react";
 import Link from "next/link";
-import { useState, useRef } from "react";
-import { useGeneration } from "@/hooks/useGeneration";
+import { useState, useRef, useEffect } from "react";
 
 export default function TextToSpeechPage() {
   const [text, setText] = useState('');
-  const [voice, setVoice] = useState('en_female');
+  const [voice, setVoice] = useState('en_alloy');
   const [speed, setSpeed] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { generate, loading, error, output } = useGeneration('speech');
 
   const handleGenerate = async () => {
     if (!text) return;
-    await generate({ text, voice, speed });
+    
+    try {
+      setLoading(true);
+      setError(null);
+      setAudioUrl(null);
+
+      const response = await fetch('/api/speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, voice, speed }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate speech');
+      }
+
+      setAudioUrl(data.url);
+      setDuration(data.duration || 0);
+    } catch (err: any) {
+      setError(err.message);
+      console.error('Speech generation error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePlay = () => {
@@ -27,6 +57,30 @@ export default function TextToSpeechPage() {
       audioRef.current.play();
     }
     setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    const audio = audioRef.current;
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const handleLoadedMetadata = () => setDuration(audio.duration);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('ended', () => setIsPlaying(false));
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('ended', () => setIsPlaying(false));
+    };
+  }, [audioRef.current]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -64,7 +118,7 @@ export default function TextToSpeechPage() {
                   >
                     {loading ? 'Generating...' : 'Generate'} <Sparkles className="ml-2 h-4 w-4" />
                   </Button>
-                  <p className="text-sm text-gray-500">Using Bark</p>
+                  <p className="text-sm text-gray-500">Using OpenAI TTS</p>
                 </div>
                 {error && (
                   <p className="text-sm text-red-500">{error}</p>
@@ -77,7 +131,7 @@ export default function TextToSpeechPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Generated Audio</h3>
-                  {output && output[0] ? (
+                  {audioUrl ? (
                     <div className="flex items-center gap-4">
                       <Button size="icon" variant="ghost" onClick={togglePlay}>
                         {isPlaying ? (
@@ -88,14 +142,19 @@ export default function TextToSpeechPage() {
                       </Button>
                       <audio 
                         ref={audioRef} 
-                        src={output[0]} 
+                        src={audioUrl}
                         onEnded={() => setIsPlaying(false)} 
                         className="hidden" 
                       />
-                      <div className="w-48 h-1 bg-gray-200 dark:bg-gray-700 rounded-full">
-                        <div className="w-1/3 h-full bg-pink-500 rounded-full"></div>
+                      <div className="w-48 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-pink-500 rounded-full transition-all duration-150"
+                          style={{ width: `${(currentTime / duration) * 100}%` }}
+                        />
                       </div>
-                      <span className="text-sm text-gray-500">0:00</span>
+                      <span className="text-sm text-gray-500">
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                      </span>
                     </div>
                   ) : (
                     <div className="text-sm text-gray-500">No audio generated yet</div>
@@ -117,30 +176,36 @@ export default function TextToSpeechPage() {
                     value={voice}
                     onChange={(e) => setVoice(e.target.value)}
                   >
-                    <option value="en_female">Nicole (Female)</option>
-                    <option value="en_male">James (Male)</option>
-                    <option value="en_neutral">Alex (Neutral)</option>
+                    <option value="en_alloy">Alloy (Neutral)</option>
+                    <option value="en_echo">Echo (Male)</option>
+                    <option value="en_fable">Fable (Expressive)</option>
+                    <option value="en_nova">Nova (Female)</option>
+                    <option value="en_shimmer">Shimmer (Warm)</option>
+                    <option value="en_onyx">Onyx (Deep)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Speed</label>
+                  <label className="block text-sm font-medium mb-2">Speed ({speed}x)</label>
                   <input 
                     type="range" 
-                    min="0.5" 
-                    max="2" 
-                    step="0.1" 
+                    min="0.25" 
+                    max="4.0" 
+                    step="0.25" 
                     value={speed}
                     onChange={(e) => setSpeed(Number(e.target.value))}
-                    className="w-full"
+                    className="w-full accent-pink-500"
                   />
                 </div>
               </div>
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">History</h3>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-500">Your generated audio files will appear here</p>
+              <h3 className="text-lg font-semibold mb-4">Tips</h3>
+              <div className="space-y-2 text-sm text-gray-500">
+                <p>• Try different voices for variety</p>
+                <p>• Adjust speed for natural pacing</p>
+                <p>• Use punctuation for better flow</p>
+                <p>• Keep text under 4096 characters</p>
               </div>
             </div>
           </div>
