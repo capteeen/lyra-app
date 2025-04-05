@@ -7,14 +7,10 @@ export default function CreatePage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
       {/* Header */}
       <header className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl">
-        <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center">
           <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
             Lyra
           </Link>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost">Sign In</Button>
-            <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Get Started</Button>
-          </div>
         </div>
       </header>
 
