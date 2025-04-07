@@ -27,14 +27,58 @@ export default function LandingPage() {
                   Experience the future of creativity with Lyra's AI-powered tools. Generate images, process videos, and interact with intelligent assistants.
                 </p>
               </div>
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center">
-                  <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-                  Free Trial
+              <div className="flex flex-col space-y-6">
+                <div className="flex items-center space-x-4 text-sm">
+                  <div className="flex items-center">
+                    <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+                    Free Trial
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+                    No Credit Card
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-                  No Credit Card
+
+                {/* Token Information */}
+                <div className="flex flex-col space-y-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                  <div className="flex items-center space-x-2">
+                    <CircleDollarSign className="h-5 w-5 text-indigo-500" />
+                    <span className="font-semibold text-lg">$LYRA Token</span>
+                    <div className="px-2 py-1 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-xs font-medium">
+                      Solana
+                    </div>
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Total Supply:</span>
+                      <span className="font-mono font-medium">1,000,000,000</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Contract Address:</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg">Coming Soon</span>
+                        <button 
+                          className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                          title="Copy address"
+                          disabled
+                        >
+                          <svg 
+                            className="w-4 h-4 text-gray-500" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" 
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -363,13 +407,13 @@ export default function LandingPage() {
                               <User className="w-4 h-4 text-white" />
                             </div>
                             AI Avatar Creator - 2D/3D avatars for VTubing
-                          </li>
+          </li>
                           <li className="flex items-center text-gray-600 dark:text-gray-400">
                             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500 mr-3">
                               <Lock className="w-4 h-4 text-white" />
                             </div>
                             Token-Gated Access Tiers
-                          </li>
+          </li>
                         </ul>
                       </div>
                     </div>
@@ -519,6 +563,43 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+      {/* Social Section */}
+      <section className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
+        <div className="container max-w-6xl mx-auto px-4 md:px-6">
+          <div className="relative overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-10"></div>
+            <div className="relative bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm rounded-3xl">
+              <div className="p-8 md:p-12 flex flex-col items-center text-center space-y-6">
+                <div className="relative w-16 h-16">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl transform rotate-6 opacity-30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl transform -rotate-3 opacity-30"></div>
+                  <div className="relative flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl">
+                    <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl">Follow Us on X (Twitter)</h2>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    Stay updated with our latest AI innovations and announcements
+                  </p>
+                </div>
+                <a 
+                  href="https://x.com/lyra_agent?s=21&t=ARvJV7n4r1UMTlD-08jo_g"
+            target="_blank"
+            rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-medium hover:opacity-90 transition-opacity"
+                >
+                  <span>@lyra_agent</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950">
