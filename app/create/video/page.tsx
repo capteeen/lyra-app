@@ -54,8 +54,12 @@ export default function VideoPage() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || data.status === 'error') {
         throw new Error(data.error || 'Failed to generate video');
+      }
+
+      if (!data.url) {
+        throw new Error('No video URL received');
       }
 
       setVideoUrl(data.url);

@@ -10,7 +10,7 @@ async function initiateVideoGeneration(prompt: string) {
     console.log('Initiating video generation with prompt:', prompt);
     
     const output = await replicate.run(
-      "kwaivgi/kling-v1.6-standard",
+      "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
       {
         input: {
           prompt: prompt,
@@ -29,9 +29,12 @@ async function initiateVideoGeneration(prompt: string) {
       throw new Error('No output received from the API');
     }
 
+    // Ensure we're returning a string URL from the array of outputs
+    const videoUrl = Array.isArray(output) ? output[0] : output;
+
     return { 
-      status: 'completed',
-      url: output,
+      status: 'success',
+      url: videoUrl,
       message: 'Video generation completed'
     };
   } catch (error: any) {
@@ -40,7 +43,13 @@ async function initiateVideoGeneration(prompt: string) {
       stack: error.stack,
       cause: error.cause
     });
-    throw new Error(`Failed to generate video: ${error.message}`);
+    
+    // Ensure we're throwing an error with a clean message
+    if (error.response) {
+      throw new Error(`API error: ${error.response.statusText}`);
+    } else {
+      throw new Error(`Failed to generate video: ${error.message}`);
+    }
   }
 }
 
@@ -68,8 +77,13 @@ export async function POST(req: Request) {
       error: error.message,
       stack: error.stack
     });
+    
+    // Ensure we're returning a properly formatted error response
     return NextResponse.json(
-      { error: error.message || 'Failed to generate video' },
+      { 
+        status: 'error',
+        error: error.message || 'Failed to generate video'
+      },
       { status: 500 }
     );
   }
