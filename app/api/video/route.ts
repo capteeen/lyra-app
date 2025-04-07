@@ -5,8 +5,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-// Updated to use WAN 2.1 with LoRA support
-const MODEL_VERSION = "fofr/wan2.1-with-lora:c48fa8ec65b13143cb552ab98ea17984eab9d70e9fe99479117de40a2a7f9ed0";
+// Updated to use publicly accessible WAN model version
+const MODEL_VERSION = "cjwbw/wanx:4e3b86b16d44f55733e2f5097b794f446b76f0d58d178b2f3389b3e337f1d82d";
 
 // Initiate video generation and return prediction ID
 async function initiateVideoGeneration(prompt: string) {
@@ -16,14 +16,15 @@ async function initiateVideoGeneration(prompt: string) {
     const prediction = await replicate.predictions.create({
       version: MODEL_VERSION,
       input: {
-        prompt,
-        lora_url: "https://huggingface.co/motimalu/wan-flat-color-v2/resolve/main/wan_flat_color_v2.safetensors",
+        prompt: prompt,
+        negative_prompt: "bad quality, worse quality, low quality",
         num_frames: 24,
         width: 512,
         height: 512,
-        fps: 12,
         num_inference_steps: 50,
-        guidance_scale: 17.5
+        guidance_scale: 17.5,
+        fps: 12,
+        style_preset: "anime"
       }
     });
 
