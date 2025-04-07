@@ -5,8 +5,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-// Updated to use publicly accessible WAN model version
-const MODEL_VERSION = "cjwbw/wanx:4e3b86b16d44f55733e2f5097b794f446b76f0d58d178b2f3389b3e337f1d82d";
+// Updated to use Luma Ray Flash model
+const MODEL_VERSION = "luma/ray-flash-2-540p";
 
 // Initiate video generation and return prediction ID
 async function initiateVideoGeneration(prompt: string) {
@@ -16,15 +16,7 @@ async function initiateVideoGeneration(prompt: string) {
     const prediction = await replicate.predictions.create({
       version: MODEL_VERSION,
       input: {
-        prompt: prompt,
-        negative_prompt: "bad quality, worse quality, low quality",
-        num_frames: 24,
-        width: 512,
-        height: 512,
-        num_inference_steps: 50,
-        guidance_scale: 17.5,
-        fps: 12,
-        style_preset: "anime"
+        prompt: prompt
       }
     });
 
@@ -55,18 +47,13 @@ async function checkVideoStatus(predictionId: string) {
 
     if (prediction.status === 'succeeded') {
       const output = prediction.output;
-      if (!output || !Array.isArray(output) || output.length === 0) {
+      if (!output || typeof output !== 'string') {
         throw new Error('Invalid output format received');
-      }
-
-      const videoUrl = output[0];
-      if (!videoUrl || typeof videoUrl !== 'string') {
-        throw new Error('No valid video URL in output');
       }
 
       return {
         status: 'success',
-        url: videoUrl,
+        url: output,
         message: 'Video generation completed'
       };
     } else if (prediction.status === 'failed') {
