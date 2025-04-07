@@ -332,6 +332,42 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-16">
+              {/* Token Utility - Moved to top */}
+              <div className="mb-24">
+                <div className="flex items-center justify-center mb-8">
+                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-full flex items-center">
+                    <CircleDollarSign className="w-5 h-5 mr-2" />
+                    <span className="font-semibold">Token Utility</span>
+                  </div>
+                </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                    <div className="flex flex-col items-center space-y-4">
+                      <Wallet className="w-10 h-10 text-indigo-500" />
+                      <span className="text-sm font-medium text-center">Pay for AI tools and credits</span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                    <div className="flex flex-col items-center space-y-4">
+                      <Star className="w-10 h-10 text-purple-500" />
+                      <span className="text-sm font-medium text-center">Unlock premium features</span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                    <div className="flex flex-col items-center space-y-4">
+                      <Database className="w-10 h-10 text-pink-500" />
+                      <span className="text-sm font-medium text-center">Stake for AI model training</span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                    <div className="flex flex-col items-center space-y-4">
+                      <BotIcon className="w-10 h-10 text-rose-500" />
+                      <span className="text-sm font-medium text-center">Enable "Hire My AI" features</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Timeline Container */}
               <div className="relative">
                 {/* Timeline Line */}
@@ -407,13 +443,13 @@ export default function LandingPage() {
                               <User className="w-4 h-4 text-white" />
                             </div>
                             AI Avatar Creator - 2D/3D avatars for VTubing
-          </li>
+                          </li>
                           <li className="flex items-center text-gray-600 dark:text-gray-400">
                             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500 mr-3">
                               <Lock className="w-4 h-4 text-white" />
                             </div>
                             Token-Gated Access Tiers
-          </li>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -527,34 +563,6 @@ export default function LandingPage() {
                           <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Autonomous AI creation & earning</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Token Utility */}
-                <div className="mt-24">
-                  <div className="flex items-center justify-center mb-8">
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-full flex items-center">
-                      <CircleDollarSign className="w-5 h-5 mr-2" />
-                      <span className="font-semibold">Token Utility</span>
-                    </div>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
-                      <Wallet className="w-8 h-8 text-indigo-500" />
-                      <span className="text-sm font-medium">Pay for AI tools and credits</span>
-                    </div>
-                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
-                      <Star className="w-8 h-8 text-purple-500" />
-                      <span className="text-sm font-medium">Unlock premium features</span>
-                    </div>
-                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
-                      <Database className="w-8 h-8 text-pink-500" />
-                      <span className="text-sm font-medium">Stake for AI model training</span>
-                    </div>
-                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
-                      <BotIcon className="w-8 h-8 text-rose-500" />
-                      <span className="text-sm font-medium">Enable "Hire My AI" features</span>
                     </div>
                   </div>
                 </div>
