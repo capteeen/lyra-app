@@ -5,53 +5,43 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-type ReplicateOutput = string | string[] | { [key: string]: any } | null;
+const MODEL_VERSION = "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351";
 
 async function initiateVideoGeneration(prompt: string) {
   try {
     console.log('Initiating video generation with prompt:', prompt);
-    
-    const output = await replicate.run(
-      "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
-      {
-        input: {
-          prompt: prompt,
-          fps: 24,
-          num_frames: 24,
-          width: 576,
-          height: 320,
-          guidance_scale: 17.5,
-          num_inference_steps: 50,
-          negative_prompt: "bad quality, worse quality, low quality, blurry, ugly, duplicate, error"
-        }
+
+    const output = await replicate.run(MODEL_VERSION, {
+      input: {
+        prompt,
+        video_length: 4,
+        width: 1024,
+        height: 576,
+        fps: 24,
+        guidance_scale: 17.5,
+        num_inference_steps: 50
       }
-    ) as ReplicateOutput;
+    }) as string[];
 
-    console.log('Generation completed, raw output:', output);
+    console.log('Generation output:', output);
 
-    // Handle different output formats
-    let videoUrl: string | undefined;
-    if (Array.isArray(output)) {
-      videoUrl = output[0];
-    } else if (typeof output === 'string') {
-      videoUrl = output;
-    } else if (output && typeof output === 'object') {
-      const outputObj = output as { [key: string]: any };
-      videoUrl = outputObj.url || outputObj.output || outputObj[0];
+    if (!output || !Array.isArray(output) || output.length === 0) {
+      throw new Error('Invalid output format received');
     }
 
+    const videoUrl = output[0];
     if (!videoUrl || typeof videoUrl !== 'string') {
-      throw new Error('Invalid video URL format received from API');
+      throw new Error('No valid video URL in output');
     }
 
     // Validate URL format
     try {
       new URL(videoUrl);
     } catch {
-      throw new Error('Invalid URL format received from API');
+      throw new Error('Invalid URL format received');
     }
 
-    return { 
+    return {
       status: 'success',
       url: videoUrl,
       message: 'Video generation completed'
@@ -62,8 +52,7 @@ async function initiateVideoGeneration(prompt: string) {
       stack: error.stack,
       cause: error.cause
     });
-    
-    // Clean error message for client
+
     let errorMessage = 'Failed to generate video';
     if (error.response?.status === 404) {
       errorMessage = 'Video generation service unavailable';
@@ -71,6 +60,8 @@ async function initiateVideoGeneration(prompt: string) {
       errorMessage = 'Invalid response from video service';
     } else if (error.message.includes('pattern')) {
       errorMessage = 'Video format error - please try again';
+    } else if (error.message.includes('exceeded your quota')) {
+      errorMessage = 'API quota exceeded - please try again later';
     }
 
     throw new Error(errorMessage);
