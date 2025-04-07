@@ -11,6 +11,44 @@ export default function VideoPage() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [predictionId, setPredictionId] = useState<string | null>(null);
+
+  // Poll for video status
+  useEffect(() => {
+    if (!predictionId || !loading) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch('/api/video', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ predictionId }),
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'error') {
+          throw new Error(data.error);
+        }
+
+        if (data.status === 'success') {
+          setVideoUrl(data.url);
+          setLoading(false);
+          setPredictionId(null);
+          clearInterval(pollInterval);
+        }
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+        setPredictionId(null);
+        clearInterval(pollInterval);
+      }
+    }, 1000);
+
+    return () => clearInterval(pollInterval);
+  }, [predictionId, loading]);
 
   // Progress bar animation
   useEffect(() => {
@@ -43,6 +81,7 @@ export default function VideoPage() {
       setError(null);
       setVideoUrl(null);
       setProgress(0);
+      setPredictionId(null);
 
       const response = await fetch('/api/video', {
         method: 'POST',
@@ -52,35 +91,22 @@ export default function VideoPage() {
         body: JSON.stringify({ prompt }),
       });
 
-      let data;
-      try {
-        const text = await response.text();
-        try {
-          data = JSON.parse(text);
-        } catch {
-          // If response is not JSON, use text as error message
-          throw new Error(text || 'Failed to generate video');
-        }
-      } catch (parseError: any) {
-        throw new Error(
-          parseError instanceof Error ? parseError.message : 'Failed to parse response'
-        );
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        throw new Error(data.error);
       }
 
-      if (!response.ok || data.status === 'error') {
-        throw new Error(data.error || 'Failed to generate video');
+      if (data.status === 'pending') {
+        setPredictionId(data.id);
+      } else if (data.status === 'success') {
+        setVideoUrl(data.url);
+        setLoading(false);
       }
-
-      if (!data.url) {
-        throw new Error('No video URL received');
-      }
-
-      setVideoUrl(data.url);
     } catch (err: any) {
       setError(err.message);
-      console.error('Video generation error:', err);
-    } finally {
       setLoading(false);
+      console.error('Video generation error:', err);
     }
   };
 
