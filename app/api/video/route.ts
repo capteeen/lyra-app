@@ -21,7 +21,7 @@ async function initiateVideoGeneration(prompt: string) {
         guidance_scale: 17.5,
         num_inference_steps: 50
       }
-    }) as string[];
+    });
 
     console.log('Generation output:', output);
 
@@ -53,15 +53,20 @@ async function initiateVideoGeneration(prompt: string) {
       cause: error.cause
     });
 
+    // Handle different types of errors
     let errorMessage = 'Failed to generate video';
-    if (error.response?.status === 404) {
-      errorMessage = 'Video generation service unavailable';
-    } else if (error.message.includes('Invalid URL')) {
-      errorMessage = 'Invalid response from video service';
-    } else if (error.message.includes('pattern')) {
-      errorMessage = 'Video format error - please try again';
-    } else if (error.message.includes('exceeded your quota')) {
-      errorMessage = 'API quota exceeded - please try again later';
+    
+    if (error.response) {
+      try {
+        const errorBody = await error.response.json();
+        errorMessage = errorBody.error || errorMessage;
+      } catch {
+        errorMessage = error.response.statusText || errorMessage;
+      }
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error.message) {
+      errorMessage = error.message;
     }
 
     throw new Error(errorMessage);
@@ -71,7 +76,13 @@ async function initiateVideoGeneration(prompt: string) {
 export async function POST(req: Request) {
   try {
     if (!process.env.REPLICATE_API_TOKEN) {
-      throw new Error('REPLICATE_API_TOKEN is not configured');
+      return NextResponse.json(
+        { 
+          status: 'error',
+          error: 'REPLICATE_API_TOKEN is not configured'
+        },
+        { status: 500 }
+      );
     }
 
     const body = await req.json();
@@ -79,7 +90,10 @@ export async function POST(req: Request) {
 
     if (!prompt) {
       return NextResponse.json(
-        { error: 'Prompt is required' },
+        { 
+          status: 'error',
+          error: 'Prompt is required'
+        },
         { status: 400 }
       );
     }
