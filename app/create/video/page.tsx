@@ -52,7 +52,20 @@ export default function VideoPage() {
         body: JSON.stringify({ prompt }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        const text = await response.text();
+        try {
+          data = JSON.parse(text);
+        } catch {
+          // If response is not JSON, use text as error message
+          throw new Error(text || 'Failed to generate video');
+        }
+      } catch (parseError: any) {
+        throw new Error(
+          parseError instanceof Error ? parseError.message : 'Failed to parse response'
+        );
+      }
 
       if (!response.ok || data.status === 'error') {
         throw new Error(data.error || 'Failed to generate video');
