@@ -27,7 +27,7 @@ export default function CreatePage() {
           </div>
 
           {/* Features Grid */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Image Generation */}
             <Link href="/create/image" className="group">
               <div className="relative h-[300px] p-6 rounded-3xl bg-white dark:bg-gray-900 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800 transition-all hover:shadow-xl">
@@ -85,6 +85,26 @@ export default function CreatePage() {
                   </div>
                 </div>
                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-500/20 to-rose-500/20 blur-3xl rounded-full transform translate-x-1/2 translate-y-1/2 group-hover:scale-150 transition-transform" />
+              </div>
+            </Link>
+
+            {/* AI Chat */}
+            <Link href="/create/chat" className="group">
+              <div className="relative h-[300px] p-6 rounded-3xl bg-white dark:bg-gray-900 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800 transition-all hover:shadow-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 group-hover:opacity-100 opacity-0 transition-opacity" />
+                <div className="relative z-10 h-full flex flex-col">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-4">
+                    <Bot className="h-6 w-6 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-semibold mb-2">AI Chat</h2>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">
+                    Get creative assistance and guidance from Lyra AI
+                  </p>
+                  <div className="mt-auto flex items-center text-blue-500 font-medium">
+                    Start Chatting <Sparkles className="ml-2 h-4 w-4" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 blur-3xl rounded-full transform translate-x-1/2 translate-y-1/2 group-hover:scale-150 transition-transform" />
               </div>
             </Link>
 
