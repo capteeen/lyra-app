@@ -5,9 +5,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-const MODEL_VERSION = "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351";
+const MODEL_VERSION = "stability-ai/stable-video-diffusion:3f0457e4619daac51351b5c90025c0e11de0ca8c627aa3bcadba1bb6abc5c228";
 
-// Initiate video generation and return prediction ID
 async function initiateVideoGeneration(prompt: string) {
   try {
     console.log('Initiating video generation with prompt:', prompt);
@@ -16,12 +15,13 @@ async function initiateVideoGeneration(prompt: string) {
       version: MODEL_VERSION,
       input: {
         prompt,
-        video_length: 4,
-        width: 1024,
-        height: 576,
-        fps: 24,
-        guidance_scale: 17.5,
-        num_inference_steps: 50
+        video_length: "14_frames_with_svd",
+        sizing_strategy: "maintain_aspect_ratio",
+        frames_per_second: 6,
+        motion_bucket_id: 127,
+        cond_aug: 0.02,
+        decoding_timesteps: 10,
+        num_inference_steps: 25
       }
     });
 
@@ -44,83 +44,30 @@ async function initiateVideoGeneration(prompt: string) {
   }
 }
 
-// Check video generation status
-async function checkVideoStatus(predictionId: string) {
-  try {
-    const prediction = await replicate.predictions.get(predictionId);
-    console.log('Checking prediction status:', prediction.status);
-
-    if (prediction.status === 'succeeded') {
-      const output = prediction.output;
-      if (!output || !Array.isArray(output) || output.length === 0) {
-        throw new Error('Invalid output format received');
-      }
-
-      const videoUrl = output[0];
-      if (!videoUrl || typeof videoUrl !== 'string') {
-        throw new Error('No valid video URL in output');
-      }
-
-      return {
-        status: 'success',
-        url: videoUrl,
-        message: 'Video generation completed'
-      };
-    } else if (prediction.status === 'failed') {
-      throw new Error(prediction.error || 'Video generation failed');
-    }
-
-    // Still processing
-    return {
-      status: 'pending',
-      id: predictionId,
-      message: 'Video is still generating'
-    };
-  } catch (error: any) {
-    console.error('Status check error:', error);
-    throw new Error(error.message || 'Failed to check video status');
-  }
-}
-
 export async function POST(req: Request) {
   try {
     if (!process.env.REPLICATE_API_TOKEN) {
-      return NextResponse.json(
-        { 
-          status: 'error',
-          error: 'REPLICATE_API_TOKEN is not configured'
-        },
-        { status: 500 }
-      );
+      throw new Error('REPLICATE_API_TOKEN is not configured');
     }
 
     const body = await req.json();
-    const { prompt, predictionId } = body;
+    const { prompt } = body;
 
-    // If predictionId is provided, check status of existing prediction
-    if (predictionId) {
-      const result = await checkVideoStatus(predictionId);
-      return NextResponse.json(result);
-    }
-
-    // Otherwise, start new video generation
     if (!prompt) {
       return NextResponse.json(
-        { 
-          status: 'error',
-          error: 'Prompt is required'
-        },
+        { error: 'Prompt is required' },
         { status: 400 }
       );
     }
 
     const result = await initiateVideoGeneration(prompt);
+    console.log('Generation result:', result);
+    
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Video generation error:', {
       error: error.message,
-      stack: error.stack,
-      response: error.response
+      stack: error.stack
     });
     
     return NextResponse.json(
