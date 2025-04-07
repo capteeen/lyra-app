@@ -7,6 +7,8 @@ const replicate = new Replicate({
 
 const MODEL_VERSION = "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351";
 
+type ReplicateOutput = string | string[] | { url?: string; output?: string } | null;
+
 async function initiateVideoGeneration(prompt: string) {
   try {
     console.log('Initiating video generation with prompt:', prompt);
@@ -21,15 +23,30 @@ async function initiateVideoGeneration(prompt: string) {
         guidance_scale: 17.5,
         num_inference_steps: 50
       }
-    });
+    }) as ReplicateOutput;
 
     console.log('Generation output:', output);
 
-    if (!output || !Array.isArray(output) || output.length === 0) {
-      throw new Error('Invalid output format received');
+    if (!output) {
+      throw new Error('No output received from video generation');
     }
 
-    const videoUrl = output[0];
+    // Handle different output formats
+    let videoUrl: string;
+    if (Array.isArray(output)) {
+      if (output.length === 0) {
+        throw new Error('Empty output array received');
+      }
+      videoUrl = output[0];
+    } else if (typeof output === 'string') {
+      videoUrl = output;
+    } else if (typeof output === 'object') {
+      const outputObj = output as { url?: string; output?: string; [key: string]: any };
+      videoUrl = outputObj.url || outputObj.output || outputObj[0];
+    } else {
+      throw new Error('Unexpected output format received');
+    }
+
     if (!videoUrl || typeof videoUrl !== 'string') {
       throw new Error('No valid video URL in output');
     }
@@ -50,7 +67,8 @@ async function initiateVideoGeneration(prompt: string) {
     console.error('Video generation error details:', {
       error: error.message,
       stack: error.stack,
-      cause: error.cause
+      cause: error.cause,
+      response: error.response
     });
 
     // Handle different types of errors
@@ -58,10 +76,19 @@ async function initiateVideoGeneration(prompt: string) {
     
     if (error.response) {
       try {
-        const errorBody = await error.response.json();
-        errorMessage = errorBody.error || errorMessage;
+        // Try to read the response as text first
+        const text = await error.response.text();
+        try {
+          // Try to parse as JSON if possible
+          const data = JSON.parse(text);
+          errorMessage = data.error || data.message || text;
+        } catch {
+          // If not JSON, use the text directly
+          errorMessage = text;
+        }
       } catch {
-        errorMessage = error.response.statusText || errorMessage;
+        // If can't read response, use status text
+        errorMessage = error.response.statusText || 'API error occurred';
       }
     } else if (typeof error === 'string') {
       errorMessage = error;
@@ -105,7 +132,8 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('Video generation error:', {
       error: error.message,
-      stack: error.stack
+      stack: error.stack,
+      response: error.response
     });
     
     return NextResponse.json(
