@@ -5,6 +5,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
+type ReplicateOutput = string | string[] | { [key: string]: any } | null;
+
 async function initiateVideoGeneration(prompt: string) {
   try {
     console.log('Initiating video generation with prompt:', prompt);
@@ -14,23 +16,40 @@ async function initiateVideoGeneration(prompt: string) {
       {
         input: {
           prompt: prompt,
+          fps: 24,
           num_frames: 24,
-          fps: 8,
-          guidance_scale: 7.5,
-          num_inference_steps: 25,
-          negative_prompt: "blurry, low quality, distorted"
+          width: 576,
+          height: 320,
+          guidance_scale: 17.5,
+          num_inference_steps: 50,
+          negative_prompt: "bad quality, worse quality, low quality, blurry, ugly, duplicate, error"
         }
       }
-    );
+    ) as ReplicateOutput;
 
-    console.log('Generation completed, output:', output);
+    console.log('Generation completed, raw output:', output);
 
-    if (!output) {
-      throw new Error('No output received from the API');
+    // Handle different output formats
+    let videoUrl: string | undefined;
+    if (Array.isArray(output)) {
+      videoUrl = output[0];
+    } else if (typeof output === 'string') {
+      videoUrl = output;
+    } else if (output && typeof output === 'object') {
+      const outputObj = output as { [key: string]: any };
+      videoUrl = outputObj.url || outputObj.output || outputObj[0];
     }
 
-    // Ensure we're returning a string URL from the array of outputs
-    const videoUrl = Array.isArray(output) ? output[0] : output;
+    if (!videoUrl || typeof videoUrl !== 'string') {
+      throw new Error('Invalid video URL format received from API');
+    }
+
+    // Validate URL format
+    try {
+      new URL(videoUrl);
+    } catch {
+      throw new Error('Invalid URL format received from API');
+    }
 
     return { 
       status: 'success',
@@ -44,21 +63,27 @@ async function initiateVideoGeneration(prompt: string) {
       cause: error.cause
     });
     
-    // Ensure we're throwing an error with a clean message
-    if (error.response) {
-      throw new Error(`API error: ${error.response.statusText}`);
-    } else {
-      throw new Error(`Failed to generate video: ${error.message}`);
+    // Clean error message for client
+    let errorMessage = 'Failed to generate video';
+    if (error.response?.status === 404) {
+      errorMessage = 'Video generation service unavailable';
+    } else if (error.message.includes('Invalid URL')) {
+      errorMessage = 'Invalid response from video service';
+    } else if (error.message.includes('pattern')) {
+      errorMessage = 'Video format error - please try again';
     }
+
+    throw new Error(errorMessage);
   }
 }
 
 export async function POST(req: Request) {
   try {
-    console.log('Received POST request');
-    const body = await req.json();
-    console.log('Request body:', body);
+    if (!process.env.REPLICATE_API_TOKEN) {
+      throw new Error('REPLICATE_API_TOKEN is not configured');
+    }
 
+    const body = await req.json();
     const { prompt } = body;
 
     if (!prompt) {
@@ -78,13 +103,12 @@ export async function POST(req: Request) {
       stack: error.stack
     });
     
-    // Ensure we're returning a properly formatted error response
     return NextResponse.json(
       { 
         status: 'error',
         error: error.message || 'Failed to generate video'
       },
-      { status: 500 }
+      { status: error.response?.status || 500 }
     );
   }
 }
