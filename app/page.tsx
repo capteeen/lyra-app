@@ -1,12 +1,14 @@
 'use client';
 
-import { ArrowRight, Sparkles, Video, Image as ImageIcon, Bot, CheckCircle } from "lucide-react";
+import { ArrowRight, Sparkles, Video, Image as ImageIcon, Bot, CheckCircle, Star, Repeat, 
+  CircleDollarSign, Zap, CloudCog, Wallet, ShoppingCart, Share2, Bot as BotIcon, 
+  Swords, Globe, Puzzle, Database, FileCheck, UserCog, Paintbrush, Mic2, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
       {/* Hero Section - Split Design */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
         <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
@@ -137,6 +139,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CTA Section - Gradient Border */}
+      <section className="py-20 bg-white dark:bg-gray-950">
+        <div className="container max-w-6xl mx-auto px-4 md:px-6">
+          <div className="relative overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            <div className="relative bg-white dark:bg-gray-950 m-[1px] rounded-[calc(1.5rem-1px)]">
+              <div className="p-8 md:p-12 lg:p-16 flex flex-col items-center text-center space-y-8">
+                <Sparkles className="h-16 w-16 text-indigo-500" />
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
+                <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                  Join thousands of creators and professionals using Lyra to bring their ideas to life.
+                </p>
+                <div className="flex flex-col gap-4 min-[400px]:flex-row">
+                  <Link href="/create">
+                    <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                      Start Creating Now
+                    </Button>
+                  </Link>
+                  <Button variant="outline">Contact Sales</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section - Card Grid */}
       <section className="py-20 bg-white dark:bg-gray-950">
         <div className="container max-w-6xl mx-auto px-4 md:px-6">
@@ -246,31 +274,251 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section - Gradient Border */}
-      <section className="py-20">
-        <div className="container max-w-6xl mx-auto px-4 md:px-6">
-          <div className="relative overflow-hidden rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-            <div className="relative bg-white dark:bg-gray-950 m-[1px] rounded-[calc(1.5rem-1px)]">
-              <div className="p-8 md:p-12 lg:p-16 flex flex-col items-center text-center space-y-8">
-                <Sparkles className="h-16 w-16 text-indigo-500" />
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
-                <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Join thousands of creators and professionals using Lyra to bring their ideas to life.
-                </p>
-                <div className="flex flex-col gap-4 min-[400px]:flex-row">
-                  <Link href="/create">
-                    <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-                      Start Creating Now
-                    </Button>
-                  </Link>
-                  <Button variant="outline">Contact Sales</Button>
+      {/* Roadmap Section */}
+      <div className="bg-gray-50 dark:bg-gray-900">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
+          <div className="mx-auto max-w-2xl lg:max-w-none">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl flex items-center justify-center">
+                <Star className="w-8 h-8 mr-2 text-indigo-500" /> Development Roadmap
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">
+                Our journey to revolutionize AI-powered content creation
+              </p>
+            </div>
+
+            <div className="mt-16">
+              {/* Timeline Container */}
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 rounded-full" />
+
+                {/* Q1 2025: Foundations */}
+                <div className="relative mb-24">
+                  <div className="flex items-center justify-center mb-8">
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-full flex items-center">
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                      <span className="font-semibold">Q1 2025: Foundations (Current)</span>
+                    </div>
+                  </div>
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-200">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
+                        <ImageIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2">AI Image Generation</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">High-quality image generation with customizable styles</p>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-200">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+                        <Video className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2">AI Video Generation</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Dynamic video creation from text prompts</p>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-200">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500">
+                        <Mic2 className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2">Text-to-Speech</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Multiple voices with natural speech patterns</p>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow p-6 transform hover:-translate-y-1 duration-200">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500">
+                        <Paintbrush className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold mb-2">Image Editing</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Advanced editing with filters and style transfer</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Future Phases */}
+                <div className="space-y-24">
+                  {/* Q2 2025 */}
+                  <div className="relative">
+                    <div className="flex items-center justify-center mb-8">
+                      <div className="bg-white dark:bg-gray-800 text-indigo-500 px-6 py-2 rounded-full shadow-lg flex items-center">
+                        <Repeat className="w-5 h-5 mr-2" />
+                        <span className="font-semibold">Q2 2025: Creative Expansion</span>
+                      </div>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="col-span-2 rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6">
+                        <ul className="space-y-4">
+                          <li className="flex items-center text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 mr-3">
+                              <Video className="w-4 h-4 text-white" />
+                            </div>
+                            AI Scene Builder - Comic strips & storyboards
+                          </li>
+                          <li className="flex items-center text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 mr-3">
+                              <Mic2 className="w-4 h-4 text-white" />
+                            </div>
+                            Voice Cloning AI - Personal voice customization
+                          </li>
+                          <li className="flex items-center text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 mr-3">
+                              <User className="w-4 h-4 text-white" />
+                            </div>
+                            AI Avatar Creator - 2D/3D avatars for VTubing
+                          </li>
+                          <li className="flex items-center text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500 mr-3">
+                              <Lock className="w-4 h-4 text-white" />
+                            </div>
+                            Token-Gated Access Tiers
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Q3 2025 */}
+                  <div className="relative">
+                    <div className="flex items-center justify-center mb-8">
+                      <div className="bg-white dark:bg-gray-800 text-purple-500 px-6 py-2 rounded-full shadow-lg flex items-center">
+                        <Star className="w-5 h-5 mr-2" />
+                        <span className="font-semibold">Q3 2025: Creator Monetization</span>
+                      </div>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                        <div className="flex items-center mb-4">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 mr-3">
+                            <ShoppingCart className="w-5 h-5 text-white" />
+                          </div>
+                          <h4 className="font-semibold">AI Marketplace</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Sell prompts, models & templates</p>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                        <div className="flex items-center mb-4">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 mr-3">
+                            <Share2 className="w-5 h-5 text-white" />
+                          </div>
+                          <h4 className="font-semibold">Auto-Post to Social</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Seamless social media integration</p>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:-translate-y-1 duration-200">
+                        <div className="flex items-center mb-4">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500 mr-3">
+                            <BotIcon className="w-5 h-5 text-white" />
+                          </div>
+                          <h4 className="font-semibold">"Hire My AI"</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Rent your AI models & earn</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Q4 2025 */}
+                  <div className="relative">
+                    <div className="flex items-center justify-center mb-8">
+                      <div className="bg-white dark:bg-gray-800 text-pink-500 px-6 py-2 rounded-full shadow-lg flex items-center">
+                        <Zap className="w-5 h-5 mr-2" />
+                        <span className="font-semibold">Q4 2025: Social + Creator Economy</span>
+                      </div>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-3">
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6">
+                        <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
+                          <Swords className="w-6 h-6 text-white" />
+                        </div>
+                        <h4 className="text-lg font-semibold mb-2 text-center">Prompt Battle Arena</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Weekly competitions with token rewards</p>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6">
+                        <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+                          <Globe className="w-6 h-6 text-white" />
+                        </div>
+                        <h4 className="text-lg font-semibold mb-2 text-center">Creative Feed</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Social platform for AI content</p>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6">
+                        <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500">
+                          <Puzzle className="w-6 h-6 text-white" />
+                        </div>
+                        <h4 className="text-lg font-semibold mb-2 text-center">Plugin Hub</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Extensible mini-apps platform</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Q1-Q2 2026 */}
+                  <div className="relative">
+                    <div className="flex items-center justify-center mb-8">
+                      <div className="bg-white dark:bg-gray-800 text-rose-500 px-6 py-2 rounded-full shadow-lg flex items-center">
+                        <CloudCog className="w-5 h-5 mr-2" />
+                        <span className="font-semibold">Q1-Q2 2026: Decentralization & On-Chain AI</span>
+                      </div>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-3">
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:scale-105 duration-200">
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-500">
+                            <Database className="w-6 h-6 text-white" />
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2 text-center">AI Training Pools</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Decentralized model training</p>
+                        </div>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:scale-105 duration-200">
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
+                            <FileCheck className="w-6 h-6 text-white" />
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2 text-center">Content Licensing</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 text-center">On-chain rights management</p>
+                        </div>
+                      </div>
+                      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 transform hover:scale-105 duration-200">
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+                            <UserCog className="w-6 h-6 text-white" />
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2 text-center">AI Clone Wallets</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Autonomous AI creation & earning</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Token Utility */}
+                <div className="mt-24">
+                  <div className="flex items-center justify-center mb-8">
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2 rounded-full flex items-center">
+                      <CircleDollarSign className="w-5 h-5 mr-2" />
+                      <span className="font-semibold">Token Utility</span>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
+                      <Wallet className="w-8 h-8 text-indigo-500" />
+                      <span className="text-sm font-medium">Pay for AI tools and credits</span>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
+                      <Star className="w-8 h-8 text-purple-500" />
+                      <span className="text-sm font-medium">Unlock premium features</span>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
+                      <Database className="w-8 h-8 text-pink-500" />
+                      <span className="text-sm font-medium">Stake for AI model training</span>
+                    </div>
+                    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 flex items-center space-x-4">
+                      <BotIcon className="w-8 h-8 text-rose-500" />
+                      <span className="text-sm font-medium">Enable "Hire My AI" features</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950">
@@ -282,6 +530,6 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
